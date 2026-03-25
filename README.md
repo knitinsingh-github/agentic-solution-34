@@ -4,6 +4,18 @@ An agentic IT support triage system built with the Anthropic Python SDK. It clas
 
 ---
 
+# Core Team Members
+
+nitinksingh@deloitte.com
+rpilla@deloitte.com
+arpagrawal@deloitte.com
+stippabhotla@deloitte.com
+nisinghal@deloitte.com
+psaisarodekrishna@deloitte.com
+gbhavaraju@deloitte.com
+
+---
+
 ## The Problem
 
 IT helpdesks drown in noise. Every ticket needs a human to decide: *How urgent is this? Who owns it?*
