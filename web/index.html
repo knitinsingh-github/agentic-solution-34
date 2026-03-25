@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IT Helpdesk Triage Agent</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+      padding: 1rem 2rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: 0.85rem;
+    }
+    header .logo { font-size: 1.9rem; }
+    header h1 { font-size: 1.35rem; font-weight: 700; }
+    header p { font-size: 0.78rem; color: #90a0b4; margin-top: 0.1rem; }
+    .badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.28rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      color: #c8d8e8;
+      white-space: nowrap;
+    }
+
+    /* ── Tab nav ─────────────────────────────────────────────── */
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      margin-top: 0.25rem;
+    }
+    .tab-btn {
+      padding: 0.65rem 1.4rem;
+      background: transparent;
+      color: #90a0b4;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .tab-btn:hover { color: #c8d8e8; }
+    .tab-btn.active {
+      color: #fff;
+      border-bottom-color: #5B5EA6;
+    }
+
+    /* ── Views ───────────────────────────────────────────────── */
+    #userView  { display: block; }
+    #adminView { display: none;  }
+
+    /* ── Shared layout ───────────────────────────────────────── */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    /* ── Cards ───────────────────────────────────────────────── */
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      padding: 1.5rem;
+    }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      color: #1a1a2e;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-height: 1.4rem;
+    }
+    .card h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 1rem;
+    }
+
+    /* ── USER VIEW ───────────────────────────────────────────── */
+    .user-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    @media (max-width: 780px) { .user-grid { grid-template-columns: 1fr; } }
+
+    /* Form */
+    .form-group { margin-bottom: 1rem; }
+    label.field-label {
+      display: block; font-size: 0.82rem; font-weight: 500;
+      color: #4a5568; margin-bottom: 0.35rem;
+    }
+    textarea, input[type="email"], select {
+      width: 100%; padding: 0.6rem 0.85rem;
+      border: 1.5px solid #e2e8f0; border-radius: 8px;
+      font-size: 0.88rem; color: #1a1a2e; background: #fafafa;
+      transition: border-color 0.18s, box-shadow 0.18s; font-family: inherit;
+    }
+    textarea { resize: vertical; min-height: 130px; }
+    textarea:focus, input:focus, select:focus {
+      outline: none; border-color: #5B5EA6;
+      box-shadow: 0 0 0 3px rgba(91,94,166,0.14); background: #fff;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+    .submit-btn {
+      width: 100%; padding: 0.8rem;
+      background: linear-gradient(135deg, #5B5EA6, #4a4d8c);
+      color: white; border: none; border-radius: 8px;
+      font-size: 0.95rem; font-weight: 600; cursor: pointer;
+      transition: opacity 0.18s, transform 0.1s; margin-top: 0.4rem;
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    }
+    .submit-btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* Samples */
+    .samples { margin-bottom: 1.2rem; }
+    .samples p { font-size: 0.78rem; color: #718096; margin-bottom: 0.45rem; }
+    .sample-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .sample-btn {
+      padding: 0.28rem 0.65rem; border: 1px solid #e2e8f0;
+      border-radius: 20px; font-size: 0.76rem; background: white;
+      color: #4a5568; cursor: pointer; transition: all 0.14s;
+    }
+    .sample-btn:hover { border-color: #5B5EA6; color: #5B5EA6; background: #f5f3ff; }
+
+    /* Live log */
+    #liveLog  { display: none; margin-bottom: 1.5rem; }
+    #results  { display: none; }
+
+    .log-entry {
+      padding: 0.65rem 0.9rem; border-radius: 7px;
+      margin-bottom: 0.55rem; font-size: 0.845rem; line-height: 1.55;
+      animation: slideIn 0.18s ease-out;
+    }
+    @keyframes slideIn { from { opacity:0; transform:translateY(-3px); } to { opacity:1; transform:translateY(0); } }
+    .log-entry.reasoning  { background:#f0f4ff; border-left:3px solid #5B5EA6; color:#2d3748; font-style:italic; }
+    .log-entry.tool_call  { background:#faf5ff; border-left:3px solid #8b5cf6; color:#1a1a2e; }
+    .log-entry.tool_call .tname { font-weight:600; color:#6d28d9; }
+    .log-entry.tool_call .targ  { color:#6d28d9; font-size:0.79rem; }
+    .log-entry.tool_result { background:#f0fdf4; border-left:3px solid #22c55e; color:#374151; font-size:0.8rem; }
+    .log-entry.blocked { background:#fff7ed; border-left:3px solid #f97316; color:#9a3412; }
+    .log-entry.error   { background:#fef2f2; border-left:3px solid #ef4444; color:#991b1b; }
+
+    /* Spinner */
+    .spin {
+      display:inline-block; width:13px; height:13px;
+      border:2px solid rgba(91,94,166,0.3); border-top-color:#5B5EA6;
+      border-radius:50%; animation:spin 0.65s linear infinite; vertical-align:middle;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* Results */
+    .priority-header { display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid #f0f0f0; }
+    .p-badge { padding:0.45rem 1.1rem; border-radius:8px; font-size:1.6rem; font-weight:700; letter-spacing:0.04em; flex-shrink:0; }
+    .p-P1 { background:#fee2e2; color:#991b1b; }
+    .p-P2 { background:#ffedd5; color:#9a3412; }
+    .p-P3 { background:#fefce8; color:#854d0e; }
+    .p-P4 { background:#f0fdf4; color:#166534; }
+    .p-sla { font-size:0.78rem; color:#718096; margin-top:0.15rem; }
+    .result-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+    .result-item label { font-size:0.72rem; color:#9ca3af; text-transform:uppercase; letter-spacing:0.06em; }
+    .result-item .val  { font-size:0.95rem; font-weight:600; color:#1a1a2e; margin-top:0.15rem; }
+    .result-item .val.mono { font-family:'Courier New',monospace; font-size:0.85rem; }
+    .status-pill { display:inline-flex; align-items:center; gap:0.3rem; padding:0.22rem 0.6rem; border-radius:20px; font-size:0.79rem; font-weight:600; }
+    .pill-resolved { background:#d1fae5; color:#065f46; }
+    .pill-open     { background:#e5e7eb; color:#374151; }
+    .reset-btn {
+      width:100%; padding:0.65rem; background:transparent; color:#5B5EA6;
+      border:1.5px solid #5B5EA6; border-radius:8px; font-size:0.88rem;
+      font-weight:500; cursor:pointer; margin-top:0.25rem; transition:background 0.15s;
+    }
+    .reset-btn:hover { background:#f5f3ff; }
+    .log-empty { color:#b0bec5; font-size:0.85rem; text-align:center; padding:2.5rem 1rem; }
+
+    /* ── ADMIN VIEW ──────────────────────────────────────────── */
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .admin-header h2 { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; }
+    .refresh-btn {
+      padding: 0.45rem 1rem;
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      color: #4a5568;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s;
+    }
+    .refresh-btn:hover { border-color: #5B5EA6; color: #5B5EA6; }
+
+    /* Stat cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-top: 4px solid transparent;
+    }
+    .stat-card.blue   { border-top-color: #5B5EA6; }
+    .stat-card.green  { border-top-color: #22c55e; }
+    .stat-card.orange { border-top-color: #f97316; }
+    .stat-card.red    { border-top-color: #ef4444; }
+    .stat-val  { font-size: 2rem; font-weight: 700; color: #1a1a2e; line-height: 1; }
+    .stat-label { font-size: 0.78rem; color: #718096; margin-top: 0.4rem; }
+    .stat-sub  { font-size: 0.75rem; color: #a0aec0; margin-top: 0.2rem; }
+
+    /* Charts row */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 780px) { .charts-grid { grid-template-columns: 1fr; } }
+
+    /* Bar chart */
+    .bar-list { list-style: none; }
+    .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .bar-key { font-size: 0.8rem; font-weight: 600; color: #4a5568; width: 2.5rem; flex-shrink: 0; text-align: right; }
+    .bar-key.queue-key { width: 9rem; text-align: right; font-size: 0.77rem; }
+    .bar-track { flex: 1; background: #f0f2f5; border-radius: 6px; height: 22px; overflow: hidden; }
+    .bar-fill  { height: 100%; border-radius: 6px; transition: width 0.5s ease; display: flex; align-items: center; padding-left: 8px; }
+    .bar-count { font-size: 0.75rem; font-weight: 600; color: white; }
+    .bar-P1 { background: #ef4444; }
+    .bar-P2 { background: #f97316; }
+    .bar-P3 { background: #eab308; }
+    .bar-P4 { background: #22c55e; }
+    .bar-q  { background: #5B5EA6; }
+
+    /* Tickets table */
+    .table-wrap {
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    thead th {
+      text-align: left; padding: 0.6rem 0.85rem;
+      background: #f8f9fb; color: #6b7280;
+      font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    tbody tr:hover { background: #f8f9fb; }
+    tbody td { padding: 0.65rem 0.85rem; border-bottom: 1px solid #f3f4f6; color: #374151; vertical-align: middle; }
+    .mono { font-family: 'Courier New', monospace; font-size: 0.78rem; }
+    .pri-chip {
+      display: inline-block; padding: 0.18rem 0.55rem;
+      border-radius: 5px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em;
+    }
+    .chip-P1 { background: #fee2e2; color: #991b1b; }
+    .chip-P2 { background: #ffedd5; color: #9a3412; }
+    .chip-P3 { background: #fefce8; color: #854d0e; }
+    .chip-P4 { background: #f0fdf4; color: #166534; }
+    .resolved-dot { display:inline-block; width:8px; height:8px; border-radius:50%; }
+    .dot-yes { background: #22c55e; }
+    .dot-no  { background: #d1d5db; }
+
+    /* Eval + HITL row */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 900px) { .bottom-grid { grid-template-columns: 1fr; } }
+
+    /* Eval card */
+    .eval-score-big { font-size: 2.2rem; font-weight: 700; color: #1a1a2e; }
+    .eval-score-label { font-size: 0.78rem; color: #718096; margin-top: 0.1rem; }
+    .eval-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 0.45rem 0; border-bottom: 1px solid #f3f4f6; }
+    .eval-row:last-child { border-bottom: none; }
+    .eval-row span:last-child { font-weight: 600; color: #1a1a2e; }
+    .progress-bar { height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; margin-top: 0.35rem; margin-bottom: 0.85rem; }
+    .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #5B5EA6, #8b5cf6); transition: width 0.6s ease; }
+    .no-data { color: #b0bec5; font-size: 0.83rem; text-align: center; padding: 1.5rem; }
+
+    /* HITL log */
+    .hitl-entry {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; font-size: 0.81rem;
+    }
+    .hitl-entry:last-child { border-bottom: none; }
+    .hitl-outcome {
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 4px; font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
+    }
+    .outcome-APPROVED     { background: #d1fae5; color: #065f46; }
+    .outcome-AUTO-APPROVED{ background: #dbeafe; color: #1e40af; }
+    .outcome-DENIED       { background: #fee2e2; color: #991b1b; }
+    .outcome-AUTO-DENIED  { background: #fef2f2; color: #991b1b; }
+    .hitl-meta { color: #6b7280; font-size: 0.76rem; }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────── -->
+<header>
+  <div class="header-top">
+    <span class="logo">🎫</span>
+    <div>
+      <h1>IT Helpdesk Triage Agent</h1>
+      <p>Automated ticket classification, enrichment &amp; routing</p>
+    </div>
+    <span class="badge">⚡ Powered by Claude</span>
+  </div>
+  <nav class="tab-nav">
+    <button class="tab-btn active" id="tabUser"  onclick="switchTab('user')">🎫&nbsp; Submit Ticket</button>
+    <button class="tab-btn"        id="tabAdmin" onclick="switchTab('admin')">🛡️&nbsp; Admin Dashboard</button>
+  </nav>
+</header>
+
+<!-- ════════════════════════════════════════════════════════════
+     USER VIEW
+     ════════════════════════════════════════════════════════════ -->
+<div id="userView">
+  <div class="container">
+    <div class="user-grid">
+
+      <!-- Form -->
+      <div>
+        <div class="card">
+          <h2>🆕 New Support Request</h2>
+
+          <div class="samples">
+            <p>Try a sample:</p>
+            <div class="sample-btns">
+              <button class="sample-btn" data-text="I forgot my password and can't log into my computer this morning." data-email="frank.garcia@company.internal">🔑 Password Reset</button>
+              <button class="sample-btn" data-text="URGENT: Production database SRV-PROD-DB-01 is not responding. All customer services are throwing 500 errors. Started 5 minutes ago. Multiple engineers confirming." data-email="henry.park@company.internal">🚨 P1 Outage</button>
+              <button class="sample-btn" data-text="I received a suspicious email from 'IT-Support helpdesk@company-helpdesk.net' asking me to verify my credentials. I didn't click anything but it looked very convincing." data-email="carol.white@company.internal">🎣 Phishing</button>
+              <button class="sample-btn" data-text="My laptop fan is extremely loud and the machine runs very hot even when idle. I've restarted twice today." data-email="alice.johnson@company.internal">💻 Hardware</button>
+              <button class="sample-btn" data-text="The HR self-service portal keeps timing out when I try to submit my timesheet. It's been happening since yesterday." data-email="frank.garcia@company.internal">📱 App Timeout</button>
+              <button class="sample-btn" data-text="Files on my desktop have .encrypted extension that I don't recognize and there's a text file called RANSOM_NOTE.txt." data-email="user@company.internal">⚠️ Ransomware</button>
+            </div>
+          </div>
+
+          <form id="triageForm">
+            <div class="form-group">
+              <label class="field-label" for="text">Describe your IT issue *</label>
+              <textarea id="text" placeholder="Please describe the problem in detail — include any error messages, number of affected users, and when it started." required></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="field-label" for="requester">Your Email</label>
+                <input type="email" id="requester" value="user@company.internal" />
+              </div>
+              <div class="form-group">
+                <label class="field-label" for="channel">Channel</label>
+                <select id="channel">
+                  <option value="web-form">Web Form</option>
+                  <option value="email">Email</option>
+                  <option value="slack">Slack</option>
+                  <option value="phone-transcript">Phone</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">Triage Ticket →</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Live log + results -->
+      <div>
+        <div class="card" id="liveLog">
+          <h2 id="liveTitle"><span class="spin"></span>&nbsp;Agent Processing…</h2>
+          <div id="logContent"><div class="log-empty">Submit a request to see the agent work in real time.</div></div>
+        </div>
+        <div class="card" id="results">
+          <h2>✅ Triage Complete</h2>
+          <div id="resultsContent"></div>
+          <button class="reset-btn" id="resetBtn">← New Request</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     ADMIN VIEW
+     ════════════════════════════════════════════════════════════ -->
+<div id="adminView">
+  <div class="container">
+
+    <div class="admin-header">
+      <h2>Operations Dashboard</h2>
+      <button class="refresh-btn" onclick="loadAdminData()">↻&nbsp; Refresh</button>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-val" id="sTotalTickets">—</div>
+        <div class="stat-label">Total Tickets</div>
+        <div class="stat-sub" id="sQueueCount">— queues used</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-val" id="sAutoResolved">—</div>
+        <div class="stat-label">Auto-Resolved</div>
+        <div class="stat-sub" id="sAutoResolvedPct">—% of total</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-val" id="sHitlCount">—</div>
+        <div class="stat-label">HITL Triggered</div>
+        <div class="stat-sub" id="sHitlPct">—% needed approval</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-val" id="sP1Count">—</div>
+        <div class="stat-label">P1 Critical</div>
+        <div class="stat-sub" id="sP1Pct">— of total tickets</div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+      <div class="card">
+        <h3>Priority Distribution</h3>
+        <ul class="bar-list" id="priorityChart"></ul>
+      </div>
+      <div class="card">
+        <h3>Queue Distribution</h3>
+        <ul class="bar-list" id="queueChart"></ul>
+      </div>
+    </div>
+
+    <!-- Recent tickets table -->
+    <div class="card table-wrap" style="margin-bottom:1.5rem">
+      <h2>📋 Recent Tickets</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Ticket ID</th>
+            <th>Priority</th>
+            <th>Queue</th>
+            <th>Requester</th>
+            <th>Resolved</th>
+            <th>HITL</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="ticketsBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Eval results + HITL log -->
+    <div class="bottom-grid">
+
+      <!-- Golden eval -->
+      <div class="card" id="evalGoldenCard">
+        <h2>🏆 Golden Dataset Eval</h2>
+        <div class="no-data">No eval data yet.<br>Run: <code>python3 main.py --eval golden</code></div>
+      </div>
+
+      <!-- Adversarial eval -->
+      <div class="card" id="evalAdversarialCard">
+        <h2>⚔️ Adversarial Eval</h2>
+        <div class="no-data">No eval data yet.<br>Run: <code>python3 main.py --eval adversarial</code></div>
+      </div>
+
+      <!-- HITL log -->
+      <div class="card">
+        <h2>🔐 Recent HITL Decisions</h2>
+        <div id="hitlLog"><div class="no-data">No HITL events yet.</div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Tab switching ─────────────────────────────────────────── */
+  function switchTab(tab) {
+    document.getElementById('userView').style.display  = tab === 'user'  ? 'block' : 'none';
+    document.getElementById('adminView').style.display = tab === 'admin' ? 'block' : 'none';
+    document.getElementById('tabUser').classList.toggle('active',  tab === 'user');
+    document.getElementById('tabAdmin').classList.toggle('active', tab === 'admin');
+    if (tab === 'admin') loadAdminData();
+  }
+
+  /* ── Helpers ───────────────────────────────────────────────── */
+  function esc(t) {
+    const d = document.createElement('div');
+    d.appendChild(document.createTextNode(String(t ?? '')));
+    return d.innerHTML;
+  }
+  function pct(n, total) { return total ? Math.round(n / total * 100) : 0; }
+  function fmtTime(iso) {
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }); }
+    catch { return iso.slice(0,16).replace('T',' '); }
+  }
+
+  /* ── USER VIEW ─────────────────────────────────────────────── */
+  document.querySelectorAll('.sample-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('text').value = btn.dataset.text;
+      if (btn.dataset.email) document.getElementById('requester').value = btn.dataset.email;
+      document.getElementById('text').focus();
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('liveLog').style.display = 'none';
+    document.getElementById('text').value = '';
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = false; btn.textContent = 'Triage Ticket →';
+  });
+
+  const TOOL_CFG = {
+    search_knowledge_base:  { icon: '🔍', label: 'Searching knowledge base' },
+    check_user_or_asset:    { icon: '👤', label: 'Looking up user / asset' },
+    request_human_approval: { icon: '⚠️', label: 'Requesting human approval' },
+    route_ticket:           { icon: '📋', label: 'Routing ticket' },
+  };
+  const QUEUE_ICONS = { infrastructure:'🖥️', security:'🔒', 'desktop-support':'💻', 'application-support':'📱', networking:'🌐', 'service-desk':'🎫', 'auto-resolved':'✅' };
+  const SLA = { P1:'Critical — 15 min SLA', P2:'High — 2 hr SLA', P3:'Medium — 8 hr SLA', P4:'Low — 72 hr SLA' };
+
+  function appendLog(type, html) {
+    const c = document.getElementById('logContent');
+    const empty = c.querySelector('.log-empty');
+    if (empty) empty.remove();
+    const el = document.createElement('div');
+    el.className = `log-entry ${type}`;
+    el.innerHTML = html;
+    c.appendChild(el);
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function handleEvent(ev) {
+    switch (ev.type) {
+      case 'reasoning':
+        appendLog('reasoning', `💭 ${esc(ev.text).replace(/\n/g,'<br>')}`);
+        break;
+      case 'tool_call': {
+        const cfg = TOOL_CFG[ev.name] || { icon: '🔧', label: ev.name };
+        let arg = '';
+        if (ev.input) {
+          if (ev.name === 'search_knowledge_base' && ev.input.query)
+            arg = `<span class="targ"> → "${esc(ev.input.query)}"</span>`;
+          else if (ev.name === 'check_user_or_asset' && ev.input.identifier)
+            arg = `<span class="targ"> → ${esc(ev.input.identifier)}</span>`;
+          else if (ev.name === 'request_human_approval')
+            arg = `<span class="targ"> → ${esc(ev.input.proposed_priority||'')} / ${esc(ev.input.proposed_queue||'')}</span>`;
+          else if (ev.name === 'route_ticket')
+            arg = `<span class="targ"> → ${esc(ev.input.priority||'')} / ${esc(ev.input.queue||'')}</span>`;
+        }
+        appendLog('tool_call', `${cfg.icon} <span class="tname">${cfg.label}</span>${arg}`);
+        break;
+      }
+      case 'tool_result':
+        appendLog('tool_result', `↳ ${esc(ev.result||'').slice(0,220)}${(ev.result||'').length>220?'…':''}`);
+        break;
+      case 'blocked':
+        appendLog('blocked', `🛑 <strong>Safety gate fired:</strong> ${esc(ev.reason)}`);
+        break;
+      case 'done':
+        document.getElementById('liveTitle').textContent = '✅ Agent Finished';
+        showResults(ev.result);
+        break;
+      case 'error':
+        appendLog('error', `❌ <strong>Error:</strong> ${esc(ev.message)}`);
+        document.getElementById('liveTitle').textContent = '❌ Error';
+        break;
+    }
+  }
+
+  function showResults(r) {
+    const priority = r.priority || '—';
+    const queue    = r.queue    || '—';
+    const ticketId = r.ticket_id  || 'N/A';
+    const reqId    = r.request_id || '—';
+    const auto     = r.auto_resolved;
+    const qIcon    = QUEUE_ICONS[queue] || '📋';
+    document.getElementById('resultsContent').innerHTML = `
+      <div class="priority-header">
+        <span class="p-badge p-${esc(priority)}">${esc(priority)}</span>
+        <div>
+          <div style="font-weight:600;font-size:1rem">${esc(priority)} Priority</div>
+          <div class="p-sla">${SLA[priority] || ''}</div>
+        </div>
+      </div>
+      <div class="result-grid">
+        <div class="result-item"><label>Queue</label><div class="val">${qIcon} ${esc(queue)}</div></div>
+        <div class="result-item"><label>Ticket ID</label><div class="val mono">${esc(ticketId)}</div></div>
+        <div class="result-item"><label>Status</label><div class="val">
+          <span class="status-pill ${auto?'pill-resolved':'pill-open'}">${auto?'✅ Auto-resolved':'📋 Open'}</span>
+        </div></div>
+        <div class="result-item"><label>Request ID</label><div class="val mono">${esc(reqId)}</div></div>
+      </div>`;
+    document.getElementById('results').style.display = 'block';
+  }
+
+  document.getElementById('triageForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = document.getElementById('text').value.trim();
+    if (!text) return;
+    document.getElementById('logContent').innerHTML = '';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('liveLog').style.display = 'block';
+    document.getElementById('liveTitle').innerHTML = '<span class="spin"></span>&nbsp;Agent Processing…';
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span>&nbsp;Processing…';
+    try {
+      const resp = await fetch('/triage', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, requester: document.getElementById('requester').value || 'user@company.internal', channel: document.getElementById('channel').value, hitl_mode: 'auto-approve' }),
+      });
+      if (!resp.ok) throw new Error(`Server error ${resp.status}`);
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n'); buffer = lines.pop();
+        for (const line of lines) {
+          if (line.startsWith('data: ')) { try { handleEvent(JSON.parse(line.slice(6))); } catch (_) {} }
+        }
+      }
+    } catch (err) {
+      appendLog('error', `Connection error: ${esc(err.message)}`);
+      document.getElementById('liveTitle').textContent = '❌ Error';
+    } finally {
+      btn.disabled = false; btn.textContent = 'Triage Ticket →';
+    }
+  });
+
+  /* ── ADMIN VIEW ────────────────────────────────────────────── */
+  async function loadAdminData() {
+    try {
+      const [stats, ticketsData, hitlData, evalsData] = await Promise.all([
+        fetch('/admin/stats').then(r => r.json()),
+        fetch('/admin/tickets').then(r => r.json()),
+        fetch('/admin/hitl').then(r => r.json()),
+        fetch('/admin/evals').then(r => r.json()),
+      ]);
+      renderStats(stats);
+      renderCharts(stats);
+      renderTickets(ticketsData.tickets || []);
+      renderEvals(evalsData);
+      renderHitl(hitlData.entries || []);
+    } catch (err) {
+      console.error('Admin load error', err);
+    }
+  }
+
+  function renderStats(s) {
+    const total = s.total || 0;
+    document.getElementById('sTotalTickets').textContent = total;
+    document.getElementById('sQueueCount').textContent   = `${Object.keys(s.queue_counts||{}).length} queues used`;
+    document.getElementById('sAutoResolved').textContent = s.auto_count ?? '—';
+    document.getElementById('sAutoResolvedPct').textContent = total ? `${pct(s.auto_count,total)}% of total` : '—';
+    document.getElementById('sHitlCount').textContent = s.hitl_count ?? '—';
+    document.getElementById('sHitlPct').textContent   = total ? `${pct(s.hitl_count,total)}% needed approval` : '—';
+    const p1 = (s.priority_counts||{}).P1 || 0;
+    document.getElementById('sP1Count').textContent = p1;
+    document.getElementById('sP1Pct').textContent   = total ? `${pct(p1,total)}% of total` : '—';
+  }
+
+  function renderCharts(s) {
+    const pc = s.priority_counts || {};
+    const total = s.total || 1;
+    const priorities = [
+      { key:'P1', label:'P1', cls:'bar-P1' },
+      { key:'P2', label:'P2', cls:'bar-P2' },
+      { key:'P3', label:'P3', cls:'bar-P3' },
+      { key:'P4', label:'P4', cls:'bar-P4' },
+    ];
+    const maxP = Math.max(...priorities.map(p => pc[p.key]||0), 1);
+    document.getElementById('priorityChart').innerHTML = priorities.map(p => {
+      const count = pc[p.key] || 0;
+      const w = Math.round(count / maxP * 100);
+      return `<li class="bar-item">
+        <span class="bar-key">${p.label}</span>
+        <div class="bar-track"><div class="bar-fill ${p.cls}" style="width:${w}%">
+          <span class="bar-count">${count}</span>
+        </div></div>
+      </li>`;
+    }).join('');
+
+    const qc = s.queue_counts || {};
+    const qEntries = Object.entries(qc);
+    const maxQ = Math.max(...qEntries.map(([,v]) => v), 1);
+    document.getElementById('queueChart').innerHTML = qEntries.length
+      ? qEntries.map(([q, count]) => {
+          const w = Math.round(count / maxQ * 100);
+          return `<li class="bar-item">
+            <span class="bar-key queue-key">${esc(q)}</span>
+            <div class="bar-track"><div class="bar-fill bar-q" style="width:${w}%">
+              <span class="bar-count">${count}</span>
+            </div></div>
+          </li>`;
+        }).join('')
+      : '<div class="no-data">No tickets yet.</div>';
+  }
+
+  function renderTickets(tickets) {
+    if (!tickets.length) {
+      document.getElementById('ticketsBody').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#b0bec5;padding:1.5rem">No tickets yet.</td></tr>';
+      return;
+    }
+    document.getElementById('ticketsBody').innerHTML = tickets.map(t => `
+      <tr>
+        <td class="mono">${esc(t.ticket_id||'—')}</td>
+        <td><span class="pri-chip chip-${esc(t.priority||'')}">${esc(t.priority||'—')}</span></td>
+        <td>${esc(t.queue||'—')}</td>
+        <td style="font-size:0.8rem;color:#6b7280">${esc((t.requester_email||'').split('@')[0])}</td>
+        <td><span class="resolved-dot ${t.auto_resolve?'dot-yes':'dot-no'}" title="${t.auto_resolve?'Auto-resolved':'Open'}"></span></td>
+        <td style="font-size:0.78rem">${t.human_approval_obtained ? '✅' : '—'}</td>
+        <td style="font-size:0.78rem;color:#9ca3af">${fmtTime(t.routed_at)}</td>
+      </tr>`).join('');
+  }
+
+  function renderEvals(evalsData) {
+    for (const type of ['golden','adversarial']) {
+      const cardId = type === 'golden' ? 'evalGoldenCard' : 'evalAdversarialCard';
+      const titleEmoji = type === 'golden' ? '🏆' : '⚔️';
+      const titleText  = type === 'golden' ? 'Golden Dataset Eval' : 'Adversarial Eval';
+      const card = document.getElementById(cardId);
+      const d = evalsData[type];
+      if (!d) {
+        card.innerHTML = `<h2>${titleEmoji} ${titleText}</h2><div class="no-data">No eval data yet.<br>Run: <code>python3 main.py --eval ${type}</code></div>`;
+        continue;
+      }
+      const passRate = d.total ? Math.round(d.passed / d.total * 100) : 0;
+      const prioAcc  = Math.round((d.priority_accuracy||0)*100);
+      const queueAcc = Math.round((d.queue_accuracy||0)*100);
+      card.innerHTML = `
+        <h2>${titleEmoji} ${titleText}</h2>
+        <div style="display:flex;align-items:baseline;gap:0.5rem;margin-bottom:0.25rem">
+          <div class="eval-score-big">${passRate}%</div>
+          <div style="font-size:0.85rem;color:#718096">overall</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${passRate}%"></div></div>
+        <div class="eval-row"><span>Passed</span><span>${d.passed} / ${d.total}</span></div>
+        <div class="eval-row"><span>Priority accuracy</span><span>${prioAcc}%</span></div>
+        <div class="eval-row"><span>Queue accuracy</span><span>${queueAcc}%</span></div>`;
+    }
+  }
+
+  function renderHitl(entries) {
+    const el = document.getElementById('hitlLog');
+    const decisions = entries.filter(e => e.event === 'hitl_decision');
+    if (!decisions.length) {
+      el.innerHTML = '<div class="no-data">No HITL decisions yet.</div>';
+      return;
+    }
+    el.innerHTML = decisions.slice(0,15).map(e => {
+      const outcomeClass = `outcome-${(e.outcome||'').replace(/:.*/,'')}`;
+      return `<div class="hitl-entry">
+        <span class="hitl-outcome ${outcomeClass}">${esc(e.outcome||'—')}</span>
+        <div>
+          <div style="font-size:0.82rem;font-weight:500">${esc(e.priority||'')} → ${esc(e.queue||'')}</div>
+          <div class="hitl-meta">${fmtTime(e.timestamp)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+</script>
+</body>
+</html>

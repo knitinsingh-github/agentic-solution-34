@@ -198,6 +198,7 @@ def run_triage(
     *,
     hitl_mode: str = "interactive",
     verbose: bool = True,
+    on_event=None,
 ) -> dict:
     """
     Triage a single IT support request.
@@ -271,6 +272,8 @@ def run_triage(
                 result["reasoning"] += block.text + "\n"
                 if verbose:
                     print(f"\n🤔  {block.text.strip()}")
+                if on_event:
+                    on_event({"type": "reasoning", "text": block.text.strip()})
 
         # Done — no more tool calls
         if response.stop_reason == "end_turn":
@@ -298,6 +301,8 @@ def run_triage(
             if verbose:
                 input_preview = json.dumps(tool_input)[:100]
                 print(f"\n🔧  {tool_name}({input_preview}{'…' if len(json.dumps(tool_input)) > 100 else ''})")
+            if on_event:
+                on_event({"type": "tool_call", "name": tool_name, "input": tool_input})
 
             # ---------------------------------------------------------------
             # HITL pre-execution gate (The Brake — Challenge 5)
@@ -311,6 +316,8 @@ def run_triage(
                 )
                 if verbose:
                     print(f"  🛑  Gate blocked: {reason}")
+                if on_event:
+                    on_event({"type": "blocked", "name": tool_name, "reason": reason})
                 tool_results.append({
                     "type": "tool_result",
                     "tool_use_id": block.id,
@@ -325,6 +332,8 @@ def run_triage(
 
             if verbose:
                 print(f"  → {result_text[:120]}{'…' if len(result_text) > 120 else ''}")
+            if on_event:
+                on_event({"type": "tool_result", "name": tool_name, "result": result_text[:400]})
 
             tool_results.append({
                 "type": "tool_result",
@@ -356,6 +365,9 @@ def run_triage(
         pass
 
     log.save()
+
+    if on_event:
+        on_event({"type": "done", "result": result})
 
     if verbose:
         print(f"\n{'─'*62}")

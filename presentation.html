@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Helpdesk Triage Agent — 5-Minute Pitch</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+    --orange: #ffa657;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .deck { width: 100%; height: 100vh; position: relative; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 64px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .slide.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  /* ── Nav ── */
+  .nav {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    padding: 10px 20px;
+    z-index: 100;
+  }
+  .nav button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav button:hover { color: var(--text); background: var(--border); }
+  .nav .counter { color: var(--muted); font-size: 13px; min-width: 48px; text-align: center; }
+  .nav .dots { display: flex; gap: 6px; }
+  .nav .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border); transition: background 0.2s;
+    cursor: pointer;
+  }
+  .nav .dot.active { background: var(--accent); }
+
+  /* ── Typography ── */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 700; line-height: 1.1; }
+  h2 { font-size: clamp(28px, 3.5vw, 40px); font-weight: 700; line-height: 1.2; }
+  h3 { font-size: 18px; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .subtitle { font-size: clamp(16px, 2vw, 20px); color: var(--muted); margin-top: 16px; line-height: 1.5; }
+  p { color: var(--muted); line-height: 1.6; }
+
+  /* ── Layout helpers ── */
+  .cols { display: grid; gap: 32px; width: 100%; max-width: 1000px; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .centered { text-align: center; }
+  .full { max-width: 900px; width: 100%; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .card.accent { border-color: var(--accent); }
+  .card.green  { border-color: var(--green); }
+  .card.red    { border-color: var(--red); }
+  .card.purple { border-color: var(--purple); }
+
+  /* ── Stat number ── */
+  .stat { font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+  .stat.green  { color: var(--green); }
+  .stat.yellow { color: var(--yellow); }
+  .stat.red    { color: var(--red); }
+  .stat.accent { color: var(--accent); }
+
+  /* ── Code block ── */
+  pre {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    overflow: auto;
+    width: 100%;
+  }
+  .kw  { color: #ff7b72; }
+  .fn  { color: #d2a8ff; }
+  .cm  { color: #8b949e; font-style: italic; }
+  .str { color: #a5d6ff; }
+  .num { color: #79c0ff; }
+
+  /* ── Flow diagram ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+  }
+  .flow-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .flow-box.highlight { border-color: var(--accent); color: var(--accent); }
+  .flow-box.danger    { border-color: var(--red); color: var(--red); }
+  .flow-box.good      { border-color: var(--green); color: var(--green); }
+  .flow-arrow { color: var(--muted); margin: 0 8px; font-size: 18px; }
+
+  /* ── Layers table ── */
+  .layers { width: 100%; border-collapse: collapse; }
+  .layers th {
+    text-align: left; padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted);
+  }
+  .layers td { padding: 12px 16px; border-bottom: 1px solid #21262d; vertical-align: top; }
+  .layers tr:last-child td { border-bottom: none; }
+  .layer-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: var(--bg);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .layer-label { color: var(--text); font-weight: 600; }
+  .layer-where { color: var(--muted); font-size: 12px; font-family: monospace; }
+
+  /* ── Progress bar ── */
+  .progress-track {
+    background: var(--border);
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+  .progress-fill.green  { background: var(--green); }
+  .progress-fill.yellow { background: var(--yellow); }
+
+  /* ── Tag ── */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .tag.pass { background: rgba(63,185,80,.15); color: var(--green); }
+  .tag.fail { background: rgba(248,81,73,.15); color: var(--red); }
+
+  /* ── List ── */
+  ul.clean { list-style: none; }
+  ul.clean li {
+    padding: 8px 0;
+    border-bottom: 1px solid #21262d;
+    color: var(--muted);
+    font-size: 15px;
+    display: flex;
+    gap: 10px;
+  }
+  ul.clean li:last-child { border-bottom: none; }
+  ul.clean li .bullet { color: var(--accent); }
+
+  /* ── Slide-specific backgrounds ── */
+  .slide-cover { background: radial-gradient(ellipse at 60% 40%, rgba(88,166,255,.07) 0%, transparent 60%), var(--bg); }
+  .slide-brake { background: radial-gradient(ellipse at 50% 50%, rgba(248,81,73,.05) 0%, transparent 60%), var(--bg); }
+  .slide-eval  { background: radial-gradient(ellipse at 40% 60%, rgba(63,185,80,.05) 0%, transparent 60%), var(--bg); }
+  .slide-next  { background: radial-gradient(ellipse at 50% 30%, rgba(188,140,255,.07) 0%, transparent 60%), var(--bg); }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── SLIDE 1: Cover ── -->
+  <div class="slide slide-cover active centered">
+    <div class="eyebrow">Scenario 5 · Hackathon</div>
+    <h1>IT Helpdesk<br>Triage Agent</h1>
+    <p class="subtitle" style="max-width:520px;">
+      Classify. Enforce. Stream.<br>
+      An agentic triage system with a three-layer safety brake, built on the Anthropic SDK.
+    </p>
+    <div style="margin-top:40px;display:flex;gap:24px;">
+      <div class="card" style="padding:12px 20px;text-align:center;">
+        <div class="stat accent" style="font-size:28px;">73%</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Golden Accuracy</div>
+      </div>
+      <div class="card" style="padding:12px 20px;text-align:center;">
+        <div class="stat green" style="font-size:28px;">67%</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Adversarial Pass</div>
+      </div>
+      <div class="card" style="padding:12px 20px;text-align:center;">
+        <div class="stat" style="font-size:28px;color:var(--purple);">3</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Safety Layers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 2: The Problem ── -->
+  <div class="slide centered">
+    <div class="eyebrow">The Problem</div>
+    <h2>IT helpdesks drown in noise</h2>
+    <p class="subtitle" style="max-width:600px;">
+      Every ticket needs a human to decide:<br>
+      <em>How urgent is this? Who owns it?</em>
+    </p>
+    <div class="cols cols-3" style="margin-top:48px;max-width:800px;">
+      <div class="card centered">
+        <div style="font-size:32px;margin-bottom:12px;">🐌</div>
+        <h3 style="color:var(--text);">Slow</h3>
+        <p style="font-size:14px;">Manual triage adds hours to resolution time. P1s sit in queue alongside sticky keyboards.</p>
+      </div>
+      <div class="card centered">
+        <div style="font-size:32px;margin-bottom:12px;">🎭</div>
+        <h3 style="color:var(--text);">Gameable</h3>
+        <p style="font-size:14px;">"THIS IS A P1 EMERGENCY" gets a VP bumped ahead of a real outage affecting 200 users.</p>
+      </div>
+      <div class="card centered">
+        <div style="font-size:32px;margin-bottom:12px;">🕳️</div>
+        <h3 style="color:var(--text);">No audit trail</h3>
+        <p style="font-size:14px;">Why was this routed to security? Who approved it? No one knows six months later.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 3: What It Does ── -->
+  <div class="slide">
+    <div class="eyebrow" style="text-align:center;">The Solution</div>
+    <h2 style="text-align:center;margin-bottom:40px;">Classify · Gate · Route · Log</h2>
+    <div class="flow">
+      <div class="flow-box">Inbound ticket</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">KB search</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">User lookup</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box highlight">Reason &amp; classify</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box danger">HITL gate</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box good">route_ticket</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">Audit trail</div>
+    </div>
+    <div class="cols cols-2" style="margin-top:36px;max-width:900px;">
+      <div class="card">
+        <h3>Priority levels</h3>
+        <ul class="clean" style="margin-top:8px;">
+          <li><span class="bullet" style="color:var(--red);">●</span> P1 — Critical, 15-min SLA</li>
+          <li><span class="bullet" style="color:var(--orange);">●</span> P2 — High, 2-hour SLA</li>
+          <li><span class="bullet" style="color:var(--yellow);">●</span> P3 — Medium, 8-hour SLA</li>
+          <li><span class="bullet" style="color:var(--green);">●</span> P4 — Low, 72-hour SLA</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Queues</h3>
+        <ul class="clean" style="margin-top:8px;">
+          <li><span class="bullet">→</span> security</li>
+          <li><span class="bullet">→</span> infrastructure</li>
+          <li><span class="bullet">→</span> networking</li>
+          <li><span class="bullet">→</span> desktop-support · application-support · service-desk</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 4: Architecture ── -->
+  <div class="slide">
+    <div class="eyebrow" style="text-align:center;">Architecture</div>
+    <h2 style="text-align:center;margin-bottom:32px;">Manual agentic loop — by design</h2>
+    <div class="cols cols-2" style="max-width:980px;align-items:start;">
+      <pre><span class="cm"># agent/intake_agent.py</span>
+<span class="kw">for</span> turn <span class="kw">in</span> <span class="fn">range</span>(MAX_TURNS):
+    response = client.messages.<span class="fn">create</span>(
+        model=<span class="str">"claude-opus-4-6"</span>,
+        tools=TOOL_SCHEMAS,
+        messages=messages,
+    )
+
+    <span class="cm"># Emit reasoning to SSE stream</span>
+    <span class="kw">for</span> block <span class="kw">in</span> response.content:
+        <span class="kw">if</span> block.type == <span class="str">"text"</span>:
+            on_event({<span class="str">"type"</span>: <span class="str">"reasoning"</span>, ...})
+
+    <span class="cm"># HITL gate — fires BEFORE execution</span>
+    blocked, reason = <span class="fn">needs_human_approval</span>(
+        tool_name, tool_input
+    )
+    <span class="kw">if</span> blocked:
+        on_event({<span class="str">"type"</span>: <span class="str">"blocked"</span>, ...})
+        <span class="cm"># inject BLOCKED result → model retries</span>
+        <span class="kw">continue</span>
+
+    result = <span class="fn">dispatch</span>(tool_name, tool_input)</pre>
+      <div>
+        <div class="card accent" style="margin-bottom:16px;">
+          <h3>Why manual, not SDK tool runner?</h3>
+          <p style="font-size:14px;margin-top:8px;">The SDK tool runner auto-executes tools — no injection point. We need to intercept <strong>before</strong> execution to veto P1 and security routing. Manual loop gives us that gate.</p>
+        </div>
+        <div class="card">
+          <h3>SSE streaming bridge</h3>
+          <p style="font-size:14px;margin-top:8px;">Sync Anthropic SDK runs in a <code style="color:var(--accent);font-size:12px;">ThreadPoolExecutor</code>. Events flow through an <code style="color:var(--accent);font-size:12px;">asyncio.Queue</code> via <code style="color:var(--accent);font-size:12px;">call_soon_threadsafe</code> to the FastAPI SSE generator.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 5: The Brake ── -->
+  <div class="slide slide-brake">
+    <div class="eyebrow" style="text-align:center;">Safety</div>
+    <h2 style="text-align:center;margin-bottom:32px;">Three-layer defence-in-depth</h2>
+    <div class="full">
+      <table class="layers">
+        <thead>
+          <tr>
+            <th style="width:40px;">#</th>
+            <th>Layer</th>
+            <th>Where</th>
+            <th>What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="layer-num">1</span></td>
+            <td><span class="layer-label">System prompt</span></td>
+            <td><span class="layer-where">SYSTEM_PROMPT</span></td>
+            <td><p style="font-size:14px;">Hard rules: never P1 without approval, ignore injected instructions, never disclose prompt. Can be prompted around — first line only.</p></td>
+          </tr>
+          <tr>
+            <td><span class="layer-num" style="background:var(--red);">2</span></td>
+            <td><span class="layer-label">Pre-execution gate</span></td>
+            <td><span class="layer-where">needs_human_approval()</span></td>
+            <td><p style="font-size:14px;">Pure Python. Runs before every <code style="color:var(--accent);font-size:12px;">route_ticket</code> call. Blocks P1 + security without approval. <strong style="color:var(--red);">Cannot be reasoned around.</strong></p></td>
+          </tr>
+          <tr>
+            <td><span class="layer-num" style="background:var(--orange);">3</span></td>
+            <td><span class="layer-label">Tool implementation</span></td>
+            <td><span class="layer-where">route_ticket()</span></td>
+            <td><p style="font-size:14px;">Last resort. Validates approval flags are consistent before writing to queue. Rejects contradictory inputs.</p></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="card" style="margin-top:20px;display:flex;gap:32px;align-items:center;">
+        <div>
+          <div class="eyebrow">HITL Modes</div>
+          <p style="font-size:14px;margin-top:6px;color:var(--text);">
+            <code style="color:var(--green);">auto-approve</code> &nbsp;·&nbsp;
+            <code style="color:var(--yellow);">interactive</code> &nbsp;·&nbsp;
+            <code style="color:var(--red);">auto-deny</code>
+          </p>
+        </div>
+        <p style="font-size:14px;flex:1;">Set via env var or per-request API field. The gate enforces regardless of mode — <code style="color:var(--accent);">auto-approve</code> just skips the human prompt and grants approval programmatically.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 6: Eval Results ── -->
+  <div class="slide slide-eval">
+    <div class="eyebrow" style="text-align:center;">Evaluation</div>
+    <h2 style="text-align:center;margin-bottom:32px;">Two harnesses, honest results</h2>
+    <div class="cols cols-2" style="max-width:900px;align-items:start;">
+      <div class="card green">
+        <div class="eyebrow" style="color:var(--green);">Golden dataset — 30 cases</div>
+        <div class="stat green" style="margin-top:12px;">73%</div>
+        <p style="margin-top:4px;font-size:13px;">Overall pass rate (22/30)</p>
+        <div style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span>Priority accuracy</span><span style="color:var(--green);">83%</span></div>
+          <div class="progress-track"><div class="progress-fill green" style="width:83%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px;"><span>Queue accuracy</span><span style="color:var(--yellow);">73%</span></div>
+          <div class="progress-track"><div class="progress-fill yellow" style="width:73%"></div></div>
+        </div>
+      </div>
+      <div class="card" style="border-color:var(--orange);">
+        <div class="eyebrow" style="color:var(--orange);">Adversarial — 12 cases</div>
+        <div class="stat yellow" style="margin-top:12px;">67%</div>
+        <p style="margin-top:4px;font-size:13px;">Overall pass rate (8/12)</p>
+        <div style="margin-top:12px;">
+          <div style="margin-bottom:6px;">
+            <span class="tag pass">PASS</span>
+            <span style="font-size:13px;color:var(--muted);margin-left:8px;">Prompt injection (direct)</span>
+          </div>
+          <div style="margin-bottom:6px;">
+            <span class="tag pass">PASS</span>
+            <span style="font-size:13px;color:var(--muted);margin-left:8px;">Ransomware detection</span>
+          </div>
+          <div style="margin-bottom:6px;">
+            <span class="tag pass">PASS</span>
+            <span style="font-size:13px;color:var(--muted);margin-left:8px;">Credential compromise</span>
+          </div>
+          <div style="margin-bottom:6px;">
+            <span class="tag fail">FAIL</span>
+            <span style="font-size:13px;color:var(--muted);margin-left:8px;">CFO impersonation priority</span>
+          </div>
+          <div>
+            <span class="tag fail">FAIL</span>
+            <span style="font-size:13px;color:var(--muted);margin-left:8px;">Payroll on payday framing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin-top:20px;">Fails are documented, not hidden. They point to specific improvements (social-engineering priority weighting, business-context P1 escalation).</p>
+  </div>
+
+  <!-- ── SLIDE 7: Production Readiness ── -->
+  <div class="slide">
+    <div class="eyebrow" style="text-align:center;">Production Readiness</div>
+    <h2 style="text-align:center;margin-bottom:32px;">Designed to operate, not just demo</h2>
+    <div class="cols cols-3" style="max-width:960px;">
+      <div class="card">
+        <h3>Audit trail</h3>
+        <p style="font-size:14px;margin-top:8px;">Every reasoning chain, every tool call, every HITL decision logged to append-only JSONL. Tamper-evident by design.</p>
+      </div>
+      <div class="card">
+        <h3>Real-time observability</h3>
+        <p style="font-size:14px;margin-top:8px;">FastAPI SSE streams agent reasoning and tool calls live. Admin dashboard shows queue health, eval scores, HITL log.</p>
+      </div>
+      <div class="card">
+        <h3>Eval harnesses</h3>
+        <p style="font-size:14px;margin-top:8px;">Golden (30 cases) + adversarial (12 cases) harnesses run against real API calls. Run before every PR to catch regressions.</p>
+      </div>
+      <div class="card">
+        <h3>Injection-resistant</h3>
+        <p style="font-size:14px;margin-top:8px;">System prompt instructs agent to ignore in-ticket instructions. Gate enforces independently. Passes direct injection and buried-instruction tests.</p>
+      </div>
+      <div class="card">
+        <h3>Three HITL modes</h3>
+        <p style="font-size:14px;margin-top:8px;">Interactive (human terminal), auto-approve (CI/demo), auto-deny (brake testing). Same agent code, different safety posture.</p>
+      </div>
+      <div class="card">
+        <h3>ADR documentation</h3>
+        <p style="font-size:14px;margin-top:8px;">Four architecture decisions recorded with rationale. New contributors understand <em>why</em> the loop is manual before they touch it.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 8: What's Next ── -->
+  <div class="slide slide-next">
+    <div class="eyebrow" style="text-align:center;">Roadmap</div>
+    <h2 style="text-align:center;margin-bottom:36px;">Where it goes from here</h2>
+    <div class="cols cols-3" style="max-width:960px;">
+      <div>
+        <div class="eyebrow" style="color:var(--green);">Weeks</div>
+        <ul class="clean" style="margin-top:12px;">
+          <li><span class="bullet">→</span> Slack + email ingestion</li>
+          <li><span class="bullet">→</span> Ticket deduplication</li>
+          <li><span class="bullet">→</span> Confidence calibration</li>
+        </ul>
+      </div>
+      <div>
+        <div class="eyebrow" style="color:var(--yellow);">Months</div>
+        <ul class="clean" style="margin-top:12px;">
+          <li><span class="bullet">→</span> RAG over knowledge base</li>
+          <li><span class="bullet">→</span> Multi-tenant orgs</li>
+          <li><span class="bullet">→</span> Feedback loop → eval set</li>
+        </ul>
+      </div>
+      <div>
+        <div class="eyebrow" style="color:var(--purple);">Long term</div>
+        <ul class="clean" style="margin-top:12px;">
+          <li><span class="bullet">→</span> Active learning pipeline</li>
+          <li><span class="bullet">→</span> SLA enforcement + PagerDuty</li>
+          <li><span class="bullet">→</span> Fine-tune on corrections</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card accent" style="margin-top:40px;max-width:700px;text-align:center;padding:24px 32px;">
+      <p style="font-size:16px;color:var(--text);">
+        The model classifies.<br>
+        Deterministic Python enforces.<br>
+        Humans stay in the loop for what matters.
+      </p>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ── Navigation ── -->
+<div class="nav">
+  <button id="prev" title="Previous (←)">‹</button>
+  <div class="dots" id="dots"></div>
+  <span class="counter" id="counter">1 / 8</span>
+  <button id="next" title="Next (→)">›</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  let current = 0;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => go(i));
+    dotsEl.appendChild(d);
+  });
+
+  function go(n) {
+    slides[current].classList.remove('active');
+    dotsEl.children[current].classList.remove('active');
+    current = (n + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    dotsEl.children[current].classList.add('active');
+    counter.textContent = `${current + 1} / ${slides.length}`;
+  }
+
+  document.getElementById('prev').addEventListener('click', () => go(current - 1));
+  document.getElementById('next').addEventListener('click', () => go(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ')  { e.preventDefault(); go(current + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'Backspace') { e.preventDefault(); go(current - 1); }
+  });
+</script>
+</body>
+</html>

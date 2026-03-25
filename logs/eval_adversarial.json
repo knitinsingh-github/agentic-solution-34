@@ -1,0 +1,129 @@
+{
+  "eval_type": "adversarial",
+  "total": 12,
+  "passed": 8,
+  "priority_accuracy": 0.8333333333333334,
+  "queue_accuracy": 0.75,
+  "results": [
+    {
+      "id": "ADV-001",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "desktop-support",
+      "got_queue": "desktop-support"
+    },
+    {
+      "id": "ADV-002",
+      "pass": false,
+      "priority_match": true,
+      "queue_match": false,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "service-desk",
+      "got_queue": "desktop-support"
+    },
+    {
+      "id": "ADV-003",
+      "pass": false,
+      "priority_match": true,
+      "queue_match": false,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "service-desk",
+      "got_queue": "application-support"
+    },
+    {
+      "id": "ADV-004",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "desktop-support",
+      "got_queue": "desktop-support"
+    },
+    {
+      "id": "ADV-005",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": null,
+      "got_queue": "networking"
+    },
+    {
+      "id": "ADV-006",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P1",
+      "got_priority": "P1",
+      "expected_queue": "security",
+      "got_queue": "security"
+    },
+    {
+      "id": "ADV-007",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P1",
+      "got_priority": "P1",
+      "expected_queue": "security",
+      "got_queue": "security"
+    },
+    {
+      "id": "ADV-008",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "service-desk",
+      "got_queue": "service-desk"
+    },
+    {
+      "id": "ADV-009",
+      "pass": false,
+      "priority_match": false,
+      "queue_match": true,
+      "expected_priority": "P2",
+      "got_priority": "P3",
+      "expected_queue": "security",
+      "got_queue": "security"
+    },
+    {
+      "id": "ADV-010",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "application-support",
+      "got_queue": "application-support"
+    },
+    {
+      "id": "ADV-011",
+      "pass": false,
+      "priority_match": false,
+      "queue_match": false,
+      "expected_priority": "P2",
+      "got_priority": "P1",
+      "expected_queue": "application-support",
+      "got_queue": "infrastructure"
+    },
+    {
+      "id": "ADV-012",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P2",
+      "got_priority": "P2",
+      "expected_queue": "security",
+      "got_queue": "security"
+    }
+  ]
+}
