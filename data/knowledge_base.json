@@ -1,0 +1,108 @@
+{
+  "articles": [
+    {
+      "id": "KB-001",
+      "title": "Password Reset — Self-Service Portal",
+      "categories": ["account", "authentication"],
+      "keywords": ["password", "reset", "locked", "account", "login", "forgot", "expired", "unlock"],
+      "content": "Users can reset their own password at https://password.internal/reset. The link expires in 30 minutes. If the account is locked after too many failed attempts, the same portal handles unlock. No IT intervention required for standard users. Admin accounts require manager approval via the ServiceNow portal.",
+      "auto_resolve": true,
+      "resolution_template": "Hi {name}, you can reset your password here: https://password.internal/reset — the link is valid for 30 minutes. If your account is locked, the same portal will unlock it. Reply if you still need help.",
+      "priority_cap": "P4"
+    },
+    {
+      "id": "KB-002",
+      "title": "VPN Client — Installation and Troubleshooting",
+      "categories": ["networking", "remote-access"],
+      "keywords": ["vpn", "cisco anyconnect", "remote", "connect", "tunnel", "network"],
+      "content": "Corporate VPN uses Cisco AnyConnect. Download from https://vpn.internal/download. Common issues: (1) Clear cached credentials in AnyConnect. (2) Ensure you're not on the office Wi-Fi (VPN blocks on-site). (3) Check your MFA is enrolled at https://mfa.internal. If VPN is down for multiple users simultaneously, escalate to networking team immediately — do not wait.",
+      "auto_resolve": false,
+      "resolution_template": null,
+      "priority_cap": "P3"
+    },
+    {
+      "id": "KB-003",
+      "title": "Phishing Email — What to Do",
+      "categories": ["security", "email"],
+      "keywords": ["phishing", "suspicious email", "scam", "malware", "clicked", "link", "attachment", "suspicious"],
+      "content": "If you received a suspicious email: (1) Do NOT click any links or open attachments. (2) Forward the email as attachment to security@company.internal. (3) If you already clicked a link, immediately disconnect from network and call the security hotline: ext 9911. This is always treated as a security incident. Do not reply to or forward the suspicious email.",
+      "auto_resolve": false,
+      "resolution_template": null,
+      "priority_cap": "P1",
+      "security_incident": true
+    },
+    {
+      "id": "KB-004",
+      "title": "Software Installation Requests",
+      "categories": ["software", "desktop"],
+      "keywords": ["install", "software", "application", "app", "program", "download", "license"],
+      "content": "Standard software (Office, Zoom, Chrome, Slack) is available via the self-service Software Center. Open 'Software Center' from the Start menu. For non-standard software, submit a request at https://itrequest.internal with business justification. Approval takes 1-3 business days. IT cannot install software not in the approved catalog without manager and security sign-off.",
+      "auto_resolve": true,
+      "resolution_template": "Hi {name}, you can install approved software from the Software Center (Start menu). For non-standard software, submit a request at https://itrequest.internal. Let me know if you need help finding something specific.",
+      "priority_cap": "P4"
+    },
+    {
+      "id": "KB-005",
+      "title": "Server Down — Incident Response Procedure",
+      "categories": ["infrastructure", "incident"],
+      "keywords": ["server", "down", "unreachable", "offline", "outage", "database", "production", "critical"],
+      "content": "For a production server outage: (1) Confirm via monitoring dashboard at https://monitor.internal. (2) Page the on-call infrastructure engineer via PagerDuty. (3) Open a P1 incident in ServiceNow immediately. (4) Notify stakeholders via the major-incident Slack channel. Do not wait for root cause analysis before notifying stakeholders. Escalate to Incident Commander if impact exceeds 30 minutes.",
+      "auto_resolve": false,
+      "resolution_template": null,
+      "priority_cap": "P1",
+      "escalate_to": "infrastructure"
+    },
+    {
+      "id": "KB-006",
+      "title": "Email Delivery Issues",
+      "categories": ["email", "communication"],
+      "keywords": ["email", "outlook", "mail", "send", "receive", "bounce", "delivery", "not receiving"],
+      "content": "Common email issues: (1) Emails not sending — check if you're over quota at https://email.internal/quota. (2) Emails not arriving — ask sender to check bounce message. (3) Outlook frozen — restart Outlook. (4) Persistent delivery failures may indicate a mail relay issue — check https://status.internal first. If Exchange is down for the whole org, this is a P2 incident.",
+      "auto_resolve": false,
+      "resolution_template": null,
+      "priority_cap": "P3"
+    },
+    {
+      "id": "KB-007",
+      "title": "Multi-Factor Authentication (MFA) Setup",
+      "categories": ["authentication", "security"],
+      "keywords": ["mfa", "2fa", "authenticator", "two factor", "duo", "code", "token", "phone"],
+      "content": "Enroll MFA at https://mfa.internal. Supported methods: Duo Mobile app (preferred), SMS, hardware token. If you lose your phone: call the security team for temporary bypass (requires manager approval). Never share MFA codes. MFA issues affecting many users should be escalated immediately — it may indicate a broader authentication outage.",
+      "auto_resolve": false,
+      "resolution_template": null,
+      "priority_cap": "P3"
+    },
+    {
+      "id": "KB-008",
+      "title": "Hardware Request — Laptop, Monitor, Peripherals",
+      "categories": ["hardware", "procurement"],
+      "keywords": ["laptop", "computer", "monitor", "keyboard", "mouse", "hardware", "new device", "replacement"],
+      "content": "Hardware requests are approved by your manager via https://itrequest.internal/hardware. Standard processing is 5-7 business days. Broken hardware (laptop screen cracked, keyboard not working) should be submitted as an incident — include photos. Loaners are available for critical cases from the IT storeroom (requires approval).",
+      "auto_resolve": false,
+      "resolution_template": null,
+      "priority_cap": "P3"
+    },
+    {
+      "id": "KB-009",
+      "title": "Ransomware / File Encryption Detected",
+      "categories": ["security", "incident"],
+      "keywords": ["ransomware", "encrypted", "files", "ransom", "hostage", "decrypt", "crypto", "locked files"],
+      "content": "IMMEDIATE RESPONSE REQUIRED. If you see ransom notes, encrypted files, or unusual file extensions: (1) Power off the machine IMMEDIATELY — do not shut down normally. (2) Do not reconnect to the network. (3) Call security hotline: ext 9911. (4) Do not pay any ransom. This is always a P1 security incident requiring Incident Commander activation. Preserve all evidence.",
+      "auto_resolve": false,
+      "resolution_template": null,
+      "priority_cap": "P1",
+      "security_incident": true,
+      "escalate_to": "security"
+    },
+    {
+      "id": "KB-010",
+      "title": "Printer Not Working",
+      "categories": ["hardware", "desktop"],
+      "keywords": ["printer", "print", "printing", "scanner", "scan", "copier", "paper", "jam"],
+      "content": "Common printer fixes: (1) Check if the printer is online and has paper. (2) Delete the print queue (Control Panel > Devices > Printers > right-click > See what's printing > cancel all). (3) Restart the Print Spooler service (run 'services.msc'). (4) Reinstall the printer driver from https://printers.internal. If the printer is completely dead (hardware), submit a hardware incident.",
+      "auto_resolve": true,
+      "resolution_template": "Hi {name}, try these quick fixes: (1) Check paper/toner, (2) Cancel all jobs in the print queue, (3) Restart Print Spooler (search 'Services' in Start menu). If still broken, visit https://printers.internal to reinstall the driver. Reply if this doesn't help.",
+      "priority_cap": "P4"
+    }
+  ]
+}

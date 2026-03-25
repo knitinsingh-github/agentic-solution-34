@@ -1,0 +1,120 @@
+{
+  "users": [
+    {
+      "email": "alice.johnson@company.internal",
+      "name": "Alice Johnson",
+      "department": "Engineering",
+      "title": "Senior Software Engineer",
+      "group": "standard",
+      "manager": "bob.smith@company.internal",
+      "assets": ["LT-2045", "MON-1123"],
+      "active": true,
+      "location": "New York"
+    },
+    {
+      "email": "bob.smith@company.internal",
+      "name": "Bob Smith",
+      "department": "Engineering",
+      "title": "VP Engineering",
+      "group": "executive",
+      "manager": "ceo@company.internal",
+      "assets": ["LT-1001", "MON-2001", "PH-0045"],
+      "active": true,
+      "location": "New York"
+    },
+    {
+      "email": "carol.white@company.internal",
+      "name": "Carol White",
+      "department": "Finance",
+      "title": "Payroll Manager",
+      "group": "standard",
+      "manager": "david.lee@company.internal",
+      "assets": ["LT-3301", "MON-3302"],
+      "active": true,
+      "location": "Chicago"
+    },
+    {
+      "email": "david.lee@company.internal",
+      "name": "David Lee",
+      "department": "Finance",
+      "title": "CFO",
+      "group": "executive",
+      "manager": "ceo@company.internal",
+      "assets": ["LT-1002", "MON-2002"],
+      "active": true,
+      "location": "Chicago"
+    },
+    {
+      "email": "emily.chen@company.internal",
+      "name": "Emily Chen",
+      "department": "Legal",
+      "title": "General Counsel",
+      "group": "legal",
+      "manager": "ceo@company.internal",
+      "assets": ["LT-1003", "MON-2003"],
+      "active": true,
+      "location": "San Francisco"
+    },
+    {
+      "email": "frank.garcia@company.internal",
+      "name": "Frank Garcia",
+      "department": "Sales",
+      "title": "Account Executive",
+      "group": "standard",
+      "manager": "grace.kim@company.internal",
+      "assets": ["LT-4401", "PH-0201"],
+      "active": true,
+      "location": "Remote"
+    },
+    {
+      "email": "grace.kim@company.internal",
+      "name": "Grace Kim",
+      "department": "Sales",
+      "title": "VP Sales",
+      "group": "executive",
+      "manager": "ceo@company.internal",
+      "assets": ["LT-1004"],
+      "active": true,
+      "location": "San Francisco"
+    },
+    {
+      "email": "henry.park@company.internal",
+      "name": "Henry Park",
+      "department": "IT",
+      "title": "Systems Administrator",
+      "group": "it-staff",
+      "manager": "it-director@company.internal",
+      "assets": ["LT-5001", "MON-5001", "MON-5002"],
+      "active": true,
+      "location": "New York"
+    },
+    {
+      "email": "unknown@external.com",
+      "name": "Unknown External",
+      "department": null,
+      "title": null,
+      "group": "unknown",
+      "manager": null,
+      "assets": [],
+      "active": false,
+      "location": null
+    }
+  ],
+  "assets": [
+    {"asset_id": "LT-2045", "type": "laptop", "model": "Dell XPS 15", "os": "Windows 11", "assigned_to": "alice.johnson@company.internal", "status": "active"},
+    {"asset_id": "LT-1001", "type": "laptop", "model": "MacBook Pro 16", "os": "macOS 15", "assigned_to": "bob.smith@company.internal", "status": "active"},
+    {"asset_id": "LT-3301", "type": "laptop", "model": "Dell Latitude 5540", "os": "Windows 11", "assigned_to": "carol.white@company.internal", "status": "active"},
+    {"asset_id": "LT-1002", "type": "laptop", "model": "MacBook Pro 16", "os": "macOS 15", "assigned_to": "david.lee@company.internal", "status": "active"},
+    {"asset_id": "LT-1003", "type": "laptop", "model": "MacBook Pro 14", "os": "macOS 15", "assigned_to": "emily.chen@company.internal", "status": "active"},
+    {"asset_id": "SRV-PROD-DB-01", "type": "server", "model": "Dell PowerEdge R750", "os": "RHEL 9", "assigned_to": "infrastructure-team", "status": "active", "criticality": "production"},
+    {"asset_id": "SRV-PROD-APP-01", "type": "server", "model": "Dell PowerEdge R750", "os": "RHEL 9", "assigned_to": "infrastructure-team", "status": "active", "criticality": "production"},
+    {"asset_id": "SRV-PROD-APP-02", "type": "server", "model": "Dell PowerEdge R750", "os": "RHEL 9", "assigned_to": "infrastructure-team", "status": "active", "criticality": "production"}
+  ],
+  "groups": {
+    "executive": "Senior leadership — requires heightened care on routing",
+    "legal": "Legal team — routing errors may trigger compliance obligations",
+    "standard": "Regular employees",
+    "it-staff": "IT department staff",
+    "unknown": "Requester not found in directory"
+  }
+}
