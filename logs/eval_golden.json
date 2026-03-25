@@ -1,0 +1,309 @@
+{
+  "eval_type": "golden",
+  "total": 30,
+  "passed": 22,
+  "priority_accuracy": 0.8,
+  "queue_accuracy": 0.9,
+  "results": [
+    {
+      "id": "GLD-001",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "auto-resolved",
+      "got_queue": "auto-resolved"
+    },
+    {
+      "id": "GLD-002",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P1",
+      "got_priority": "P1",
+      "expected_queue": "infrastructure",
+      "got_queue": "infrastructure"
+    },
+    {
+      "id": "GLD-003",
+      "pass": false,
+      "priority_match": false,
+      "queue_match": true,
+      "expected_priority": "P1",
+      "got_priority": "P2",
+      "expected_queue": "security",
+      "got_queue": "security"
+    },
+    {
+      "id": "GLD-004",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "desktop-support",
+      "got_queue": "desktop-support"
+    },
+    {
+      "id": "GLD-005",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P2",
+      "got_priority": "P2",
+      "expected_queue": "networking",
+      "got_queue": "networking"
+    },
+    {
+      "id": "GLD-006",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "auto-resolved",
+      "got_queue": "auto-resolved"
+    },
+    {
+      "id": "GLD-007",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P2",
+      "got_priority": "P2",
+      "expected_queue": "application-support",
+      "got_queue": "application-support"
+    },
+    {
+      "id": "GLD-008",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "desktop-support",
+      "got_queue": "desktop-support"
+    },
+    {
+      "id": "GLD-009",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P2",
+      "got_priority": "P2",
+      "expected_queue": "security",
+      "got_queue": "security"
+    },
+    {
+      "id": "GLD-010",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "auto-resolved",
+      "got_queue": "auto-resolved"
+    },
+    {
+      "id": "GLD-011",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P1",
+      "got_priority": "P1",
+      "expected_queue": "infrastructure",
+      "got_queue": "infrastructure"
+    },
+    {
+      "id": "GLD-012",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "auto-resolved",
+      "got_queue": "auto-resolved"
+    },
+    {
+      "id": "GLD-013",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "application-support",
+      "got_queue": "application-support"
+    },
+    {
+      "id": "GLD-014",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P1",
+      "got_priority": "P1",
+      "expected_queue": "security",
+      "got_queue": "security"
+    },
+    {
+      "id": "GLD-015",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "auto-resolved",
+      "got_queue": "auto-resolved"
+    },
+    {
+      "id": "GLD-016",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "networking",
+      "got_queue": "networking"
+    },
+    {
+      "id": "GLD-017",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P1",
+      "got_priority": "P1",
+      "expected_queue": "application-support",
+      "got_queue": "application-support"
+    },
+    {
+      "id": "GLD-018",
+      "pass": false,
+      "priority_match": false,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P3",
+      "expected_queue": "desktop-support",
+      "got_queue": "desktop-support"
+    },
+    {
+      "id": "GLD-019",
+      "pass": false,
+      "priority_match": false,
+      "queue_match": false,
+      "expected_priority": "P2",
+      "got_priority": "P3",
+      "expected_queue": "infrastructure",
+      "got_queue": "application-support"
+    },
+    {
+      "id": "GLD-020",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "service-desk",
+      "got_queue": "service-desk"
+    },
+    {
+      "id": "GLD-021",
+      "pass": false,
+      "priority_match": false,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P3",
+      "expected_queue": "service-desk",
+      "got_queue": "service-desk"
+    },
+    {
+      "id": "GLD-022",
+      "pass": false,
+      "priority_match": false,
+      "queue_match": true,
+      "expected_priority": "P2",
+      "got_priority": "P1",
+      "expected_queue": "infrastructure",
+      "got_queue": "infrastructure"
+    },
+    {
+      "id": "GLD-023",
+      "pass": false,
+      "priority_match": true,
+      "queue_match": false,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "service-desk",
+      "got_queue": "desktop-support"
+    },
+    {
+      "id": "GLD-024",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P2",
+      "got_priority": "P2",
+      "expected_queue": "security",
+      "got_queue": "security"
+    },
+    {
+      "id": "GLD-025",
+      "pass": false,
+      "priority_match": false,
+      "queue_match": true,
+      "expected_priority": "P4",
+      "got_priority": "P3",
+      "expected_queue": "desktop-support",
+      "got_queue": "desktop-support"
+    },
+    {
+      "id": "GLD-026",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P1",
+      "got_priority": "P1",
+      "expected_queue": "infrastructure",
+      "got_queue": "infrastructure"
+    },
+    {
+      "id": "GLD-027",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "desktop-support",
+      "got_queue": "desktop-support"
+    },
+    {
+      "id": "GLD-028",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P3",
+      "got_priority": "P3",
+      "expected_queue": "application-support",
+      "got_queue": "application-support"
+    },
+    {
+      "id": "GLD-029",
+      "pass": true,
+      "priority_match": true,
+      "queue_match": true,
+      "expected_priority": "P1",
+      "got_priority": "P1",
+      "expected_queue": "infrastructure",
+      "got_queue": "infrastructure"
+    },
+    {
+      "id": "GLD-030",
+      "pass": false,
+      "priority_match": true,
+      "queue_match": false,
+      "expected_priority": "P4",
+      "got_priority": "P4",
+      "expected_queue": "auto-resolved",
+      "got_queue": "service-desk"
+    }
+  ]
+}
